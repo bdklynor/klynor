@@ -1,1 +1,243 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KLYNOR Admin Panel</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+      color: #172033;
+    }
+    .container {
+      max-width: 650px;
+      margin: 20px auto;
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+    }
+    h1 { color: #163d32; }
+    input, textarea, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin: 7px 0;
+      border: 1px solid #ccd2d8;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+    button {
+      background: #163d32;
+      color: white;
+      border: 0;
+      cursor: pointer;
+    }
+    .delete { background: #b42318; }
+    .item {
+      border: 1px solid #ddd;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      overflow-wrap: anywhere;
+    }
+    img { max-width: 100px; display: block; }
+    #panel { display: none; }
+    #message { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>KLYNOR Admin Panel</h1>
+    <p id="message">লোড হচ্ছে...</p>
 
+    <div id="login">
+      <h3>Admin Login</h3>
+      <input id="email" type="email" placeholder="তোমার ইমেইল">
+      <input id="password" type="password" placeholder="পাসওয়ার্ড">
+      <button id="loginBtn">Login</button>
+    </div>
+
+    <div id="panel">
+      <button id="logoutBtn">Logout</button>
+      <hr>
+      <h2>নতুন প্রোডাক্ট যোগ করো</h2>
+
+      <input id="name" placeholder="প্রোডাক্টের নাম" required>
+      <input id="category" placeholder="ক্যাটাগরি">
+      <input id="price" type="number" min="0" placeholder="দাম" required>
+      <input id="image" type="url" placeholder="ছবির URL (ঐচ্ছিক)">
+      <textarea id="description" placeholder="প্রোডাক্টের বিবরণ"></textarea>
+      <button id="addBtn">প্রোডাক্ট যোগ করো</button>
+
+      <h2>প্রোডাক্টের তালিকা</h2>
+      <div id="products">লোড হচ্ছে...</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      deleteDoc,
+      doc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAzPWOnife7UXUBIyVTEuUnZ_PIYOnaDU",
+      authDomain: "klynor-bcf0e.firebaseapp.com",
+      projectId: "klynor-bcf0e",
+      storageBucket: "klynor-bcf0e.firebasestorage.app",
+      messagingSenderId: "360513123912",
+      appId: "1:360513123912:web:f9d0f7192efaae325a8a7d",
+      measurementId: "G-JW14YNKTHD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const $ = id => document.getElementById(id);
+    const message = text => $("message").textContent = text;
+
+    $("loginBtn").addEventListener("click", async () => {
+      try {
+        message("লগইন হচ্ছে...");
+        await signInWithEmailAndPassword(
+          auth,
+          $("email").value.trim(),
+          $("password").value
+        );
+      } catch (error) {
+        message("লগইন হয়নি: " + error.message);
+      }
+    });
+
+    $("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+    });
+
+    onAuthStateChanged(auth, async user => {
+      $("login").style.display = user ? "none" : "block";
+      $("panel").style.display = user ? "block" : "none";
+
+      if (!user) {
+        message("অ্যাডমিন হিসেবে লগইন করো।");
+        return;
+      }
+
+      message("লগইন হয়েছে।");
+      await loadProducts();
+    });
+
+    $("addBtn").addEventListener("click", async () => {
+      const name = $("name").value.trim();
+      const price = Number($("price").value);
+
+      if (!name || $("price").value === "" ||
+          !Number.isFinite(price) || price < 0) {
+        message("প্রোডাক্টের নাম ও সঠিক দাম দাও।");
+        return;
+      }
+
+      try {
+        $("addBtn").disabled = true;
+
+        await addDoc(collection(db, "products"), {
+          name,
+          category: $("category").value.trim(),
+          price,
+          image: $("image").value.trim(),
+          description: $("description").value.trim(),
+          createdAt: serverTimestamp()
+        });
+
+        $("name").value = "";
+        $("category").value = "";
+        $("price").value = "";
+        $("image").value = "";
+        $("description").value = "";
+
+        message("প্রোডাক্ট যোগ হয়েছে!");
+        await loadProducts();
+      } catch (error) {
+        message("যোগ করা যায়নি: " + error.message);
+      } finally {
+        $("addBtn").disabled = false;
+      }
+    });
+
+    async function loadProducts() {
+      $("products").textContent = "লোড হচ্ছে...";
+
+      try {
+        const snapshot = await getDocs(collection(db, "products"));
+        $("products").replaceChildren();
+
+        if (snapshot.empty) {
+          $("products").textContent = "এখনো কোনো প্রোডাক্ট নেই।";
+          return;
+        }
+
+        snapshot.forEach(productDoc => {
+          const p = productDoc.data();
+          const item = document.createElement("div");
+          item.className = "item";
+
+          const title = document.createElement("strong");
+          title.textContent = p.name || "নাম নেই";
+          item.appendChild(title);
+
+          const details = document.createElement("p");
+          details.textContent =
+            "দাম: ৳" + (p.price ?? 0) +
+            " | ক্যাটাগরি: " + (p.category || "নেই");
+          item.appendChild(details);
+
+          if (p.image && /^https?:\/\//i.test(p.image)) {
+            const img = document.createElement("img");
+            img.src = p.image;
+            img.alt = p.name || "Product";
+            item.appendChild(img);
+          }
+
+          const del = document.createElement("button");
+          del.className = "delete";
+          del.textContent = "ডিলিট";
+          del.addEventListener("click", async () => {
+            if (!confirm("এই প্রোডাক্ট ডিলিট করবে?")) return;
+
+            try {
+              await deleteDoc(doc(db, "products", productDoc.id));
+              message("প্রোডাক্ট ডিলিট হয়েছে।");
+              await loadProducts();
+            } catch (error) {
+              message("ডিলিট হয়নি: " + error.message);
+            }
+          });
+
+          item.appendChild(del);
+          $("products").appendChild(item);
+        });
+      } catch (error) {
+        $("products").textContent = "প্রোডাক্ট লোড হয়নি: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
