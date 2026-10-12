@@ -656,5 +656,24 @@ $("orderForm").addEventListener("submit",e=>{
 renderProducts();
 renderCart();
 </script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAzPWOnife7UXUBIyVTEuUnZ_PIYOnaDU",
+    authDomain: "klynor-bcf0e.firebaseapp.com",
+    projectId: "klynor-bcf0e",
+    storageBucket: "klynor-bcf0e.firebasestorage.app",
+    messagingSenderId: "360513123912",
+    appId: "1:360513123912:web:f9d0f7192efaae325a8a7d",
+    measurementId: "G-JW14YNKTHD"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  console.log("KLYNOR Firebase connected!");
+</script>
 </body>
 </html>
