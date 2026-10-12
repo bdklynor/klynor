@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Klynor | Quality Cleaning Products</title>
+  <meta name="description" content="Discover Klynor cleaning products. Explore our products and order conveniently online.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#123d2a">
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans Bengali", sans-serif;
+      color: #193b2b;
+      background: #f8faf6;
+    }
+    header {
+      padding: 18px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      border-bottom: 1px solid #e5ebe4;
+    }
+    .logo { font-size: 28px; font-weight: 800; letter-spacing: 1px; }
+    .logo span { color: #62a56e; }
+    header a { color: #193b2b; text-decoration: none; }
+    .hero {
+      padding: 65px 7%;
+      background: #e7f1e6;
+      text-align: center;
+    }
+    .hero small { letter-spacing: 3px; font-weight: bold; }
+    h1 { font-size: clamp(32px, 6vw, 56px); margin: 18px 0; }
+    .hero p { max-width: 570px; margin: auto; line-height: 1.8; }
+    .btn {
+      border: 0; border-radius: 7px; padding: 13px 20px;
+      cursor: pointer; background: #174c32; color: white;
+      font-size: 15px; display: inline-block; text-decoration: none;
+    }
+    .hero .btn { margin-top: 24px; }
+    main { padding: 45px 7%; }
+    .section-title { text-align: center; margin-bottom: 30px; }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 22px;
+    }
+    .product {
+      background: white; border-radius: 12px; overflow: hidden;
+      border: 1px solid #e7ece6;
+    }
+    .product-art {
+      height: 175px; display: grid; place-items: center;
+      background: #e7f1e6; font-size: 65px;
+    }
+    .product-info { padding: 18px; }
+    .product h3 { margin: 0 0 8px; }
+    .product p { color: #66756a; font-size: 14px; line-height: 1.6; }
+    .price { font-size: 20px; font-weight: bold; margin: 14px 0; }
+    .product button { width: 100%; }
+    .order {
+      margin-top: 48px; padding: 28px; background: white;
+      border: 1px solid #e2e9e0; border-radius: 12px;
+      max-width: 600px; margin-left: auto; margin-right: auto;
+    }
+    label { display: block; font-weight: bold; margin: 15px 0 7px; }
+    input, textarea {
+      width: 100%; padding: 12px; border: 1px solid #ccd7cc;
+      border-radius: 6px; font: inherit; background: white;
+    }
+    .cart { margin: 20px 0; line-height: 1.9; }
+    .remove {
+      margin-left: 10px; color: #b42318; border: 0;
+      background: none; cursor: pointer;
+    }
+    footer {
+      text-align: center; padding: 28px 7%; background: #123d2a;
+      color: white; line-height: 1.8;
+    }
+    footer a { color: white; }
+    @media (max-width: 500px) {
+      header { padding: 15px 5%; }
+      .logo { font-size: 24px; }
+      main { padding: 35px 5%; }
+      .hero { padding: 48px 5%; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">KLYNOR<span>.</span></a>
+  <a href="#products">Our Products ↓</a>
+</header>
+
+<section class="hero">
+  <small>WELCOME TO KLYNOR</small>
+  <h1>A Cleaner Space.<br>A Better Everyday.</h1>
+  <p>
+    Discover Klynor cleaning products for your everyday cleaning needs.
+    Explore our collection and order online with ease.
+  </p>
+  <a class="btn" href="#products">Explore Products</a>
+</section>
+
+<main>
+  <section id="products">
+    <div class="section-title">
+      <h2>Our Products</h2>
+      <p>Discover the Klynor collection</p>
+    </div>
+    <div class="products" id="product-list"></div>
+  </section>
+
+  <section class="order" id="order">
+    <h2>Your Order</h2>
+    <p>Add your products, then enter your delivery details.</p>
+    <div class="cart" id="cart">Your cart is empty.</div>
+    <p id="total"><strong>Total: ৳0</strong></p>
+
+    <form id="order-form">
+      <label for="customer">Your name</label>
+      <input id="customer" required maxlength="80"
+        placeholder="Enter your name">
+
+      <label for="phone">Phone number</label>
+      <input id="phone" required type="tel" maxlength="20"
+        placeholder="01XXXXXXXXX">
+
+      <label for="address">Delivery address</label>
+      <textarea id="address" required maxlength="500" rows="3"
+        placeholder="Village/area, upazila, district"></textarea>
+
+      <label for="note">Additional note (optional)</label>
+      <textarea id="note" maxlength="300" rows="2"
+        placeholder="Any special instructions?"></textarea>
+
+      <button class="btn" type="submit" style="width:100%;margin-top:18px">
+        Send Order via WhatsApp
+      </button>
+      <p style="font-size:12px;color:#66756a">
+        Your order will be sent to our WhatsApp for confirmation.
+      </p>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <div class="logo">KLYNOR<span>.</span></div>
+  <p>Everyday care. A cleaner living.</p>
+  <p>Contact: <a id="contact-link" href="#order">Order & Contact</a></p>
+  <small>© <span id="year"></span> Klynor. All rights reserved.</small>
+</footer>
+
+<script>
+  // IMPORTANT: Replace this with your WhatsApp number.
+  // Bangladesh example: 8801XXXXXXXXX (no + sign or spaces)
+  const WHATSAPP_NUMBER = "8801XXXXXXXXX";
+
+  // Replace these sample products and prices with your real products.
+  const products = [
+    {
+      id: 1,
+      name: "Klynor Floor Cleaner",
+      description: "For your everyday floor cleaning needs.",
+      price: 180,
+      icon: "🧴"
+    },
+    {
+      id: 2,
+      name: "Klynor Dishwash",
+      description: "A cleaning essential for your kitchen.",
+      price: 120,
+      icon: "🫧"
+    },
+    {
+      id: 3,
+      name: "Klynor Multi Cleaner",
+      description: "A handy cleaner for suitable surfaces.",
+      price: 150,
+      icon: "✨"
+    }
+  ];
+
+  const cart = {};
+
+  function money(amount) {
+    return "৳" + amount.toLocaleString("en-US");
+  }
+
+  function renderProducts() {
+    document.getElementById("product-list").innerHTML =
+      products.map(p => `
+        <article class="product">
+          <div class="product-art" aria-hidden="true">${p.icon}</div>
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <p>${p.description}</p>
+            <div class="price">${money(p.price)}</div>
+            <button class="btn" onclick="addToCart(${p.id})">
+              Add to Order
+            </button>
+          </div>
+        </article>
+      `).join("");
+  }
+
+  function addToCart(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    renderCart();
+    document.getElementById("order").scrollIntoView({
+      behavior: "smooth", block: "nearest"
+    });
+  }
+
+  function changeQty(id, delta) {
+    cart[id] = (cart[id] || 0) + delta;
+    if (cart[id] <= 0) delete cart[id];
+    renderCart();
+  }
+
+  function renderCart() {
+    const items = products.filter(p => cart[p.id]);
+    const cartEl = document.getElementById("cart");
+
+    if (!items.length) {
+      cartEl.textContent = "Your cart is empty.";
+    } else {
+      cartEl.innerHTML = items.map(p => `
+        <div>
+          ${p.name} — ${money(p.price)} × ${cart[p.id]}
+          <button class="remove" type="button"
+            onclick="changeQty(${p.id}, -1)">Remove one</button>
+        </div>
+      `).join("");
+    }
+
+    const total = items.reduce((sum, p) =>
+      sum + p.price * cart[p.id], 0);
+
+    document.getElementById("total").innerHTML =
+      "<strong>Total: " + money(total) + "</strong>";
+  }
+
+  document.getElementById("order-form").addEventListener("submit", e => {
+    e.preventDefault();
+
+    if (!products.some(p => cart[p.id])) {
+      alert("Please add at least one product to your order.");
+      return;
+    }
+
+    if (!/^8801\d{9}$/.test(WHATSAPP_NUMBER)) {
+      alert("Please set your correct WhatsApp number in the code first.");
+      return;
+    }
+
+    const name = document.getElementById("customer").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const note = document.getElementById("note").value.trim();
+
+    const items = products.filter(p => cart[p.id]);
+    const total = items.reduce((sum, p) =>
+      sum + p.price * cart[p.id], 0);
+
+    const lines = [
+      "NEW KLYNOR ORDER",
+      "",
+      "Name: " + name,
+      "Customer phone: " + phone,
+      "Delivery address: " + address,
+      "",
+      "Products:",
+      ...items.map(p =>
+        p.name + " x " + cart[p.id] + " = " +
+        money(p.price * cart[p.id])
+      ),
+      "",
+      "Product total: " + money(total),
+      "Delivery charge: To be confirmed",
+      "Note: " + (note || "None")
+    ];
+
+    const url = "https://wa.me/" + WHATSAPP_NUMBER +
+      "?text=" + encodeURIComponent(lines.join("\n"));
+
+    window.open(url, "_blank");
+  });
+
+  document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+  renderProducts();
+  renderCart();
+</script>
+
+</body>
+</html>
